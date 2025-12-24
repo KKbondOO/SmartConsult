@@ -166,22 +166,126 @@ KOKORO_REPO_ID=hexgrad/Kokoro-82M-v1.1-zh
 
 
 
-### 5. 启动 MedGemma 服务
+### 5. 部署 MedGemma 模型服务
 
-如需使用本地 MedGemma 模型，需要先启动模型服务：
+项目使用本地部署的 MedGemma 模型，通过 Docker 中的 vLLM 进行加速推理。
+
+#### 5.1 安装前置要求
+
+- **Docker Desktop**（支持 NVIDIA GPU）
+- **NVIDIA GPU** 和对应驱动（本项目在 RTX 4060 笔记本上测试通过）
+- **足够的 GPU 内存**（建议至少 8GB）
+
+#### 5.2 下载模型
+
+从 Hugging Face 下载量化版本的 MedGemma 模型：
 
 ```bash
-# 启动 vLLM 服务或其他兼容 OpenAI API 的服务
-# 默认端口：8000
+# 方式 1：使用 huggingface-cli 下载
+huggingface-cli download unsloth/medgemma-4b-it-bnb-4bit --local-dir C:\Users\你的用户名\.cache\huggingface
+
+# 方式 2：在 Python 中下载
+# python -c "from transformers import AutoModel; AutoModel.from_pretrained('unsloth/medgemma-4b-it-bnb-4bit')"
 ```
 
-### 6. 启动 MCP 服务
+> **注意**：模型会默认下载到 `C:\Users\你的用户名\.cache\huggingface` 目录
+
+#### 5.3 启动 Docker 容器
+
+使用以下命令启动 vLLM 服务：
 
 ```bash
-cd path/to/medical-mcp
+docker run --runtime nvidia --gpus all \
+  --name Medgemma-4b-it \
+  --network bridge \
+  -v C:\Users\你的用户名\.cache\huggingface:/root/.cache/huggingface \
+  --env HUGGING_FACE_HUB_TOKEN=你的HF_TOKEN \
+  -p 8000:8000 \
+  --ipc=host \
+  vllm/vllm-openai:latest \
+  --model unsloth/medgemma-4b-it-bnb-4bit \
+  --tokenizer google/medgemma-4b-it \
+  --gpu-memory-utilization=0.85 \
+  --max-model-len 4096
+```
+
+**参数说明**：
+- `--runtime nvidia --gpus all`：启用 NVIDIA GPU 支持
+- `-v C:\Users\你的用户名\.cache\huggingface:/root/.cache/huggingface`：挂载本地模型缓存目录
+- `--env HUGGING_FACE_HUB_TOKEN`：你的 Hugging Face Token（可选，用于下载模型）
+- `-p 8000:8000`：映射端口 8000
+- `--gpu-memory-utilization=0.85`：使用 85% 的 GPU 内存（根据你的显卡调整）
+- `--max-model-len 4096`：最大上下文长度
+
+> **💡 提示**：本配置在 **RTX 4060 笔记本**上测试通过，如果你的显卡显存不足，可以调低 `--gpu-memory-utilization` 参数。
+
+#### 5.4 验证服务
+
+检查服务是否正常运行：
+
+```bash
+# 查看容器状态
+docker ps
+
+# 测试 API
+curl http://localhost:8000/v1/models
+```
+
+### 6. 部署 Medical MCP 服务
+
+本项目使用 Medical MCP 服务提供医学知识库查询功能。
+
+#### 6.1 克隆 MCP 项目
+
+```bash
+# 克隆开源项目
+git clone https://github.com/JamesANZ/medical-mcp.git
+cd medical-mcp
+```
+
+> **项目地址**：[https://github.com/JamesANZ/medical-mcp](https://github.com/JamesANZ/medical-mcp)
+
+#### 6.2 安装依赖
+
+```bash
+# 安装 Node.js 依赖
 npm install
+```
+
+#### 6.3 构建项目
+
+```bash
+# 编译 TypeScript 代码
 npm run build
 ```
+
+构建完成后，会在 `build/` 目录下生成 `index.js` 文件。
+
+#### 6.4 配置 MCP 路径
+
+在 `.env` 文件中配置 MCP 服务路径：
+
+```env
+# Windows 路径示例
+MCP_MEDICAL_PATH=C:\path\to\medical-mcp\build\index.js
+
+# 或使用绝对路径
+MCP_MEDICAL_PATH=D:\Projects\medical-mcp\build\index.js
+```
+
+> **注意**：路径必须指向编译后的 `build/index.js` 文件
+
+#### 6.5 验证 MCP 服务
+
+MCP 服务通过 stdio 方式调用，无需单独启动。应用会在需要时自动调用。
+
+你可以手动测试：
+
+```bash
+node build/index.js
+```
+
+
 
 ## 🎯 使用方法
 
