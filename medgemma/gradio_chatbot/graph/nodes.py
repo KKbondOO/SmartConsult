@@ -2,11 +2,11 @@ import asyncio
 from langchain_core.messages import SystemMessage, AIMessage, HumanMessage
 from langchain_openai import ChatOpenAI
 from langgraph.types import interrupt
-from ..config.settings import MEDGEMMA_MODEL_CONFIG, QUESTIONER_MODEL_CONFIG
-from ..config.prompts import DECISION_PROMPT, QUESTIONER_PROMPT, SUMMARY_PROMPT, ADVICE_SYSTEM_PROMPT
-from ..graph.state import CustomFlowState
-from ..utils.text_utils import clean_markdown
-from ..tools.agent import get_agent
+from medgemma.gradio_chatbot.config.settings import MEDGEMMA_MODEL_CONFIG, QUESTIONER_MODEL_CONFIG
+from medgemma.gradio_chatbot.config.prompts import DECISION_PROMPT, QUESTIONER_PROMPT, SUMMARY_PROMPT, ADVICE_SYSTEM_PROMPT
+from medgemma.gradio_chatbot.graph.state import CustomFlowState
+from medgemma.gradio_chatbot.utils.text_utils import clean_markdown
+from medgemma.gradio_chatbot.tools.agent import get_agent
 
 # Initialize models
 medgemma_model = ChatOpenAI(**MEDGEMMA_MODEL_CONFIG)

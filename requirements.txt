@@ -53,3 +53,5 @@ asyncio
 
 # JSON 处理
 orjson>=3.9.0
+
+kokoro

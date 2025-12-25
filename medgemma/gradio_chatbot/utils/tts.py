@@ -4,7 +4,7 @@ import numpy as np
 import soundfile as sf
 import tempfile
 from kokoro import KPipeline, KModel
-from ..config.settings import KOKORO_MODEL_PATH, KOKORO_CONFIG_PATH, KOKORO_REPO_ID, KOKORO_VOICES_DIR
+from medgemma.gradio_chatbot.config.settings import KOKORO_MODEL_PATH, KOKORO_CONFIG_PATH, KOKORO_REPO_ID, KOKORO_VOICES_DIR
 # TTS 模型 (Kokoro)
 print("正在加载 TTS 模型...")
 voice_zf = "zf_xiaoxiao"

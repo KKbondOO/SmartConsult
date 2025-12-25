@@ -1,8 +1,8 @@
 from langgraph.graph import StateGraph, START, END
 from langgraph.checkpoint.memory import MemorySaver
-from ..graph.state import CustomFlowState
-from ..graph.nodes import medgemma_decision, question_node, summary_node, edit_summary_node, advice_node
-from ..graph.edges import route_decision, route_after_question
+from medgemma.gradio_chatbot.graph.state import CustomFlowState
+from medgemma.gradio_chatbot.graph.nodes import medgemma_decision, question_node, summary_node, edit_summary_node, advice_node
+from medgemma.gradio_chatbot.graph.edges import route_decision, route_after_question
 
 # ==================== 图构建 ====================
 workflow = StateGraph(CustomFlowState)

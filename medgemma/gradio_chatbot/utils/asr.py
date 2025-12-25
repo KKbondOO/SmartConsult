@@ -1,6 +1,5 @@
 from transformers import pipeline
-from text_utils import convert_t2s
-
+from medgemma.gradio_chatbot.utils import text_utils
 # ASR 模型 (Whisper)
 print("正在加载 ASR 模型...")
 asr_pipe = pipeline(
@@ -21,7 +20,7 @@ def speech_to_text(audio_path: str) -> str:
         result = asr_pipe(audio_path)
         user_text = result["text"].strip()
         # 将繁体转换为简体
-        user_text = convert_t2s(user_text)
+        user_text = text_utils.convert_t2s(user_text)
         return user_text
     except Exception as e:
         print(f"ASR 错误: {e}")

@@ -5,8 +5,8 @@ from langchain_openai import ChatOpenAI
 from langgraph.graph import add_messages
 from langgraph.checkpoint.memory import MemorySaver
 from pydantic import BaseModel
-from ..config.settings import QUESTIONER_MODEL_CONFIG, FALLBACK_MODEL_CONFIG
-from mcp_client import get_tools
+from medgemma.gradio_chatbot.config.settings import QUESTIONER_MODEL_CONFIG, FALLBACK_MODEL_CONFIG
+from .mcp_client import get_tools
 
 # Models
 model = ChatOpenAI(**QUESTIONER_MODEL_CONFIG)

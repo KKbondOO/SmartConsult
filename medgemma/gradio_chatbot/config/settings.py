@@ -19,7 +19,8 @@ if not OPENROUTER_API_KEY:
 
 # ==================== Model Configurations ====================
 QUESTIONER_MODEL_CONFIG = {
-    "model": "z-ai/glm-4.5-air:free",
+    # "model": "z-ai/glm-4.5-air:free",
+    "model": "xiaomi/mimo-v2-flash:free",
     "api_key": SecretStr(OPENROUTER_API_KEY),
     "base_url": "https://openrouter.ai/api/v1",
     "timeout": 60,
